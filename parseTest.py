@@ -54,3 +54,89 @@ print(result.scheme, result[0], result.netloc, result[1], sep='\n')
 # www.baidu.com
 
 #  ParseResult实际上是一个元组，我们可以用索引顺序来获取，也可以用属性名获取
+
+
+from urllib.parse import urlunparse
+data = ['https', 'www.baidu.com', 'index.html', 'user', 'a=6', 'comment']
+print(urlunparse(data))
+
+#https://www.baidu.com/index.html;user?a=6#comment
+
+
+from urllib.parse import urlsplit
+result = urlsplit('https://www.baidu.com/index.html;user?id=5#comment')
+print(result)
+print(result.scheme, result[0])
+
+# SplitResult(scheme='https', netloc='www.baidu.com', path='/index.html;user', 
+# 	query='id=5', fragment='comment')
+#   https https
+
+#  SplitResult 也是一个元组类型，既可以用属性获取值，也可以用索引来获取
+
+from urllib.parse import urlunsplit
+data = ['https', 'www.baidu.com', 'index.html', 'a=6', 'comment']
+print(urlunsplit(data))
+
+#https://www.baidu.com/index.html?a=6#comment
+
+
+from urllib.parse import urljoin
+print(urljoin('https://www.baidu.com', 'FAQ.html'))
+print(urljoin('https://www.baidu.com', 'https://cuiqingcai.com/FAQ.html'))
+print(urljoin('http://www.baidu.com/about.html', 'https://cuiqingcai.com/FAQ.html'))
+print(urljoin('http://www.baidu.com/about.html', 'https://cuiqingcai.com/FAQ.html?question=2'))
+print(urljoin('http://www.baidu.com?wd=abc', 'https://cuiqingcai.com/index.php'))
+print(urljoin('http://www.baidu.com', '?category=2#comment'))
+print(urljoin('www.baidu.com', '?category=2#comment'))
+print(urljoin('www.baidu.com#comment', '?category=2'))
+
+# https://www.baidu.com/index.html?a=6#comment
+# https://www.baidu.com/FAQ.html
+# https://cuiqingcai.com/FAQ.html
+# https://cuiqingcai.com/FAQ.html
+# https://cuiqingcai.com/FAQ.html?question=2
+# https://cuiqingcai.com/index.php
+# http://www.baidu.com?category=2#comment
+# www.baidu.com?category=2#comment
+# www.baidu.com?category=2
+
+
+from urllib.parse import urlencode 
+params={
+	'name':'germey',
+	'age': 22
+}
+base_url = 'https://www.baidu.com?'
+url = base_url + urlencode(params)
+print(url)
+
+#  https://www.baidu.com?name=germey&age=22
+
+
+from urllib.parse import parse_qs
+query='name=germey&age=22'
+print(parse_qs(query))
+
+#  {'name': ['germey'], 'age': ['22']}
+
+from urllib.parse import parse_qsl
+query='name=germey&age=22'
+print(parse_qsl(query))
+
+# [('name', 'germey'), ('age', '22')]
+
+
+from urllib.parse import quote
+keyword = '中国'
+url = 'https://www.baidu.com/s?wd=' + quote(keyword)
+print(url)
+
+#https://www.baidu.com/s?wd=%E4%B8%AD%E5%9B%BD   
+###   URL 编码 
+
+from urllib.parse import unquote 
+url='https://www.baidu.com/s?wd=%E4%B8%AD%E5%9B%BD'
+print(unquote(url))
+
+#  https://www.baidu.com/s?wd=中国        URL 解码
