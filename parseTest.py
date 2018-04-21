@@ -140,3 +140,19 @@ url='https://www.baidu.com/s?wd=%E4%B8%AD%E5%9B%BD'
 print(unquote(url))
 
 #  https://www.baidu.com/s?wd=中国        URL 解码
+
+
+
+# urllib.robotparser.RobotFileParser(url='')   #  参数 url 可有现在放入，也可以通过后面	set_url() 方法放入
+
+
+from urllib.robotparser import RobotFileParser
+rp = RobotFileParser()
+rp.set_url('http://jianshu.com/robots.txt')
+rp.read()
+print(rp.can_fetch('*', 'http://jianshu.com/p/b67554025d7d'))
+print(rp.can_fetch('*', 'http://jianshu.com/search?q=python&page=1&type=collections'))
+
+
+# False
+# False
