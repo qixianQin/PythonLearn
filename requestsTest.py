@@ -1,14 +1,14 @@
 # -*- coding:utf-8 -*-
 
 #  通过指令安装：   pip3 install requests    该模块
-# import requests 
+import requests 
 
-# response = requests.get('https://www.baidu.com')
-# print(type(response))
-# print(response.status_code)
-# print(type(response.text))
-# print(response.text)
-# print(response.cookies)
+response = requests.get('https://www.baidu.com')
+print(type(response))
+print(response.status_code)
+print(type(response.text))
+print(response.text)
+print(response.cookies)
 
 
 # <class 'requests.models.Response'>
@@ -67,3 +67,204 @@ data={
 }
 response = requests.get('http://httpbin.org/get', params=data)   #  直接将参数放入URL 后面
 print(response.text)
+
+# {
+#   "args": {
+#     "age": "33", 
+#     "name": "germey"
+#   }, 
+#   "headers": {
+#     "Accept": "*/*", 
+#     "Accept-Encoding": "gzip, deflate", 
+#     "Connection": "close", 
+#     "Host": "httpbin.org", 
+#     "User-Agent": "python-requests/2.18.4"
+#   }, 
+#   "origin": "121.34.53.82", 
+#   "url": "http://httpbin.org/get?name=germey&age=33"
+# }
+
+import requests 
+from json.decoder import JSONDecodeError
+
+try:
+	respone = requests.get('http://httpbin.org/get')
+	print(type(respone.text))    #   字符
+	print(respone.json())
+	print(type(respone.json()))   #  json 转成了  字典,  若不能转换成JSON， 则会抛出 JSONDecodeError异常
+except JSONDecodeError as e:
+	print(e)
+else:
+	pass
+finally:
+	pass
+
+# <class 'str'>
+# {'args': {}, 'headers': {'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Connection': 'close', 'Host': 'httpbin.org', 'User-Agent': 'python-requests/2.18.4'}, 'origin': '121.34.53.82', 'url': 'http://httpbin.org/get'}
+# <class 'dict'>
+
+import requests 
+import re
+
+# headers = {
+# 	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36'
+# }
+
+# response = requests.get('https://github.com', headers=headers)
+# print(type(response))
+# print(response.text)
+# pattern = re.compile('<a.*?>(.*?)</a>', re.S)
+# title = re.findall(pattern, response.text)
+# print(title)
+
+###   通过requests.get（）  获取得到页面源码， 然后再通过 正则表达式 获取其中的信息
+
+
+import requests 
+
+# response = requests.get('https://github.com/favicon.ico')    #  获取图片， 输出了该图片的二进制流
+# print(response.text)
+# print(response.content)
+
+
+# import requests 
+# response = requests.get('http://github.com/favicon.ico')
+# with open('favicon.ico', 'wb') as f:
+# 	f.write(response.content)
+
+##  保存图片
+
+
+
+
+#### requests   post
+import requests
+data={
+	'name':'germey',
+	'age':99
+}
+response = requests.post('http://httpbin.org/post', data=data)
+print(response.text)
+
+# {
+#   "args": {}, 
+#   "data": "", 
+#   "files": {}, 
+#   "form": {
+#     "age": "99", 
+#     "name": "germey"
+#   }, 
+#   "headers": {
+#     "Accept": "*/*", 
+#     "Accept-Encoding": "gzip, deflate", 
+#     "Connection": "close", 
+#     "Content-Length": "18", 
+#     "Content-Type": "application/x-www-form-urlencoded", 
+#     "Host": "httpbin.org", 
+#     "User-Agent": "python-requests/2.18.4"
+#   }, 
+#   "json": null, 
+#   "origin": "121.34.53.82", 
+#   "url": "http://httpbin.org/post"
+# }
+
+
+import requests 
+response = requests.get('http://jianshu.com')
+print(type(response.status_code), response.status_code)
+print(type(response.headers), response.headers)
+print(type(response.cookies), response.cookies)
+print(type(response.url) , response.url)
+print(type(response.history), response.history)
+
+# <class 'int'> 403
+# <class 'requests.structures.CaseInsensitiveDict'> {'Date': 'Sun, 22 Apr 2018 03:46:31 GMT', 'Server': 'Tengine', 'Content-Type': 'text/html', 'Transfer-Encoding': 'chunked', 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload', 'Content-Encoding': 'gzip', 'X-Via': '1.1 shx191:10 (Cdn Cache Server V2.0), 1.1 PSfjfzdx2mj93:9 (Cdn Cache Server V2.0), 1.1 zhuhaidianxin15:6 (Cdn Cache Server V2.0)', 'Connection': 'close'}
+# <class 'requests.cookies.RequestsCookieJar'> <RequestsCookieJar[]>
+# <class 'str'> https://www.jianshu.com/
+# <class 'list'> [<Response [301]>, <Response [301]>]
+
+import requests 
+
+response = requests.get('http://www.baidu.com')
+exit() if not response.status_code == requests.codes.ok else print('Requests Successfully')
+
+#  Requests Successfully 
+
+# # 信息性状态码
+# 100: ('continue',),
+# 101: ('switching_protocols',),
+# 102: ('processing',),
+# 103: ('checkpoint',),
+# 122: ('uri_too_long', 'request_uri_too_long'),
+ 
+# # 成功状态码
+# 200: ('ok', 'okay', 'all_ok', 'all_okay', 'all_good', '\\o/', '✓'),
+# 201: ('created',),
+# 202: ('accepted',),
+# 203: ('non_authoritative_info', 'non_authoritative_information'),
+# 204: ('no_content',),
+# 205: ('reset_content', 'reset'),
+# 206: ('partial_content', 'partial'),
+# 207: ('multi_status', 'multiple_status', 'multi_stati', 'multiple_stati'),
+# 208: ('already_reported',),
+# 226: ('im_used',),
+ 
+# # 重定向状态码
+# 300: ('multiple_choices',),
+# 301: ('moved_permanently', 'moved', '\\o-'),
+# 302: ('found',),
+# 303: ('see_other', 'other'),
+# 304: ('not_modified',),
+# 305: ('use_proxy',),
+# 306: ('switch_proxy',),
+# 307: ('temporary_redirect', 'temporary_moved', 'temporary'),
+# 308: ('permanent_redirect',
+#       'resume_incomplete', 'resume',), # These 2 to be removed in 3.0
+ 
+# # 客户端错误状态码
+# 400: ('bad_request', 'bad'),
+# 401: ('unauthorized',),
+# 402: ('payment_required', 'payment'),
+# 403: ('forbidden',),
+# 404: ('not_found', '-o-'),
+# 405: ('method_not_allowed', 'not_allowed'),
+# 406: ('not_acceptable',),
+# 407: ('proxy_authentication_required', 'proxy_auth', 'proxy_authentication'),
+# 408: ('request_timeout', 'timeout'),
+# 409: ('conflict',),
+# 410: ('gone',),
+# 411: ('length_required',),
+# 412: ('precondition_failed', 'precondition'),
+# 413: ('request_entity_too_large',),
+# 414: ('request_uri_too_large',),
+# 415: ('unsupported_media_type', 'unsupported_media', 'media_type'),
+# 416: ('requested_range_not_satisfiable', 'requested_range', 'range_not_satisfiable'),
+# 417: ('expectation_failed',),
+# 418: ('im_a_teapot', 'teapot', 'i_am_a_teapot'),
+# 421: ('misdirected_request',),
+# 422: ('unprocessable_entity', 'unprocessable'),
+# 423: ('locked',),
+# 424: ('failed_dependency', 'dependency'),
+# 425: ('unordered_collection', 'unordered'),
+# 426: ('upgrade_required', 'upgrade'),
+# 428: ('precondition_required', 'precondition'),
+# 429: ('too_many_requests', 'too_many'),
+# 431: ('header_fields_too_large', 'fields_too_large'),
+# 444: ('no_response', 'none'),
+# 449: ('retry_with', 'retry'),
+# 450: ('blocked_by_windows_parental_controls', 'parental_controls'),
+# 451: ('unavailable_for_legal_reasons', 'legal_reasons'),
+# 499: ('client_closed_request',),
+ 
+# # 服务端错误状态码
+# 500: ('internal_server_error', 'server_error', '/o\\', '✗'),
+# 501: ('not_implemented',),
+# 502: ('bad_gateway',),
+# 503: ('service_unavailable', 'unavailable'),
+# 504: ('gateway_timeout',),
+# 505: ('http_version_not_supported', 'http_version'),
+# 506: ('variant_also_negotiates',),
+# 507: ('insufficient_storage',),
+# 509: ('bandwidth_limit_exceeded', 'bandwidth'),
+# 510: ('not_extended',),
+# 511: ('network_authentication_required', 'network_auth', 'network_authentication')
