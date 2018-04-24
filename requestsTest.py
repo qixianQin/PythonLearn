@@ -378,3 +378,42 @@ print(response.text)
 #     "number": "123456789"
 #   }
 # }
+
+
+
+from requests import Request, Session 
+url = 'http://httpbin.org/post'
+data = {
+	'name':'germey'
+}
+headers = {
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36'
+}
+
+session = Session()
+req = Request('POST', url, data=data, headers =headers)
+prepped = session.prepare_request(req)
+response = session.send(prepped)
+print(response.text)
+
+
+# {
+#   "args": {}, 
+#   "data": "", 
+#   "files": {}, 
+#   "form": {
+#     "name": "germey"
+#   }, 
+#   "headers": {
+#     "Accept": "*/*", 
+#     "Accept-Encoding": "gzip, deflate", 
+#     "Connection": "close", 
+#     "Content-Length": "11", 
+#     "Content-Type": "application/x-www-form-urlencoded", 
+#     "Host": "httpbin.org", 
+#     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36"
+#   }, 
+#   "json": null, 
+#   "origin": "113.91.188.47", 
+#   "url": "http://httpbin.org/post"
+# }

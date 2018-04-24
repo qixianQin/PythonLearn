@@ -33,3 +33,25 @@ import requests
 logging.captureWarnings(True) 
 response = requests.get('https://www.12306.cn', verify=False)
 print(response.status_code)
+
+# 200
+
+
+
+
+###  代理 
+import requests 
+proxies = {
+	'http':'http://10.10.1.10:3128',
+	'https':'https://10.12.12.12:1090'
+}
+
+requests.get('https://www.baidu.com', proxies=proxies)
+
+
+### 代理
+import requests 
+proxies = {
+	'http':'http://user:password@10.10.1.10:3128'
+}
+reqeusts.get('https://www.taobao.com', proxies=proxies)
