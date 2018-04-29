@@ -115,3 +115,135 @@ from lxml import etree
 html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
 result = html.xpath('//ul/a')
 print(result)
+
+## []    
+
+##  因此，这里我们要注意/和//的区别，其中/用于获取直接子节点，//用于获取子孙节点
+
+
+###  通过连续的/或//可以查找子节点或子孙节点    知道子节点可以通过 .. 来查找父节点
+from  lxml import etree
+html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
+result = html.xpath('//a[@href="link4.html"]/../@class')
+print(result)
+
+
+## 原： <li class="item-1"><a href="link4.html">fourth item</a></li>
+#['item-1']
+
+
+###  也可以通过parent::来获取父节点
+from lxml import etree
+html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
+result = html.xpath('//a[@href="link4.html"]/parent::*/@class')
+print(result)
+
+##  ['item-1']     parent:: 后加了个 *    ：  
+###   不加  * 号 报错：
+# Traceback (most recent call last):
+#   File "XPathTest.py", line 138, in <module>
+#     result = html.xpath('//a[@href="link4.html"]/parent::/@class')
+#   File "src\lxml\etree.pyx", line 2277, in lxml.etree._ElementTree.xpath
+#   File "src\lxml\xpath.pxi", line 359, in lxml.etree.XPathDocumentEvaluator.__call__
+#   File "src\lxml\xpath.pxi", line 227, in lxml.etree._XPathEvaluatorBase._handle_result
+# lxml.etree.XPathEvalError: Invalid expression
+
+
+
+###  属性匹配 
+###  @ 符号 进行属性过滤 
+from lxml import etree 
+html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
+result = html.xpath('//li[@class="item-0"]')
+print(result)
+
+# <li class="item-0"><a href="link1.html">first item</a></li>
+#  <li class="item-0"><a href="link5.html">fifth item</a>
+### 有两个匹配：  [<Element li at 0x2360b6e49c8>, <Element li at 0x2360b6e47c8>]
+
+
+
+####    文本获取
+from lxml import etree
+html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
+result = html.xpath('//li[@class="item-0"]/text()')
+print(result) 
+
+##   ['\r\n     ']
+###  XPath中text()前面是/，而此处/的含义是选取直接子节点，很明显li的直接子节点都是a节点，
+###  本都是在a节点内部的，所以这里匹配到的结果就是被修正的li节点内部的换行符，因为自动
+### 修正的li节点的尾标签换行了
+###  <li class="item-0"><a href="link1.html">first item</a></li>
+#    <li class="item-0"><a href="link5.html">fifth item</a>
+#    </li>   （etree.parse() 后自动修复）
+
+
+from lxml import etree
+html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
+result = html.xpath('//li[@class="item-0"]/a/text()')
+print(result) 
+
+### ['first item', 'fifth item']     从 a 节点里面获得 text（） 内容
+
+
+from lxml import etree
+html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
+result = html.xpath('//li[@class="item-0"]//text()')
+print(result) 
+
+####   ['first item', 'fifth item', '\r\n     ']       // ：  选取所有子孙节点的文本
+
+### 属性获取
+
+from lxml import etree
+html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
+result = html.xpath('//li/a/@href')
+print(result)
+
+
+# ['link1.html', 'link2.html', 'link3.html', 'link4.html', 'link5.html']
+
+##  此处和属性匹配的方法不同，属性匹配是中括号加属性名和值来限定某个属性，
+##  如[@href="link1.html"]，而此处的@href指的是获取节点的某个属性
+
+
+###   属性多值匹配：
+from lxml import etree
+text = '''
+	<li class = "li li-first"><a href = "link.html">first item</a></li>
+'''
+html = etree.HTML(text)
+# html = etree.parse(text, etree.HTMLParser())
+result = html.xpath('//li[@class="li"]/a/text()')
+print(result)
+##  []     li节点的class属性有两个值li和li-first, 所以无法匹配
+
+
+
+from lxml import etree
+text = '''
+	<li class = "li li-first"><a href = "link.html">first item</a></li>
+'''
+html = etree.HTML(text)
+result = html.xpath('//li[contains(@class, "li")]/a/text()')
+print(result)
+
+#  ['first item']
+
+
+
+###  根据多个属性确定一个节点，这时就需要同时匹配多个属性。此时可以使用运算符and来连接
+
+from lxml import etree
+text = '''
+ <li class = "li li-first" name = "item"><a href = "link.html">first item</a></li>
+'''
+html = etree.HTML(text)
+result = html.xpath('//li[contains(@class, "li") and @name="item"]/a/text()')
+print(result)
+
+# ['first item']
+# li节点又增加了一个属性name。要确定这个节点，需要同时根据class和name属性来选择，
+# 一个条件是class属性里面包含li字符串，另一个条件是name属性为item字符串，
+# 二者需要同时满足，需要用and操作符相连，相连之后置于中括号内进行条件筛选
+
