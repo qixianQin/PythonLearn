@@ -247,3 +247,74 @@ print(result)
 # 一个条件是class属性里面包含li字符串，另一个条件是name属性为item字符串，
 # 二者需要同时满足，需要用and操作符相连，相连之后置于中括号内进行条件筛选
 
+
+
+from lxml import etree
+text = '''
+<div>
+    <ul>
+         <li class="item-0"><a href="link1.html">first item</a></li>
+         <li class="item-1"><a href="link2.html">second item</a></li>
+         <li class="item-inactive"><a href="link3.html">third item</a></li>
+         <li class="item-1"><a href="link4.html">fourth item</a></li>
+         <li class="item-0"><a href="link5.html">fifth item</a>
+     </ul>
+ </div>
+ '''
+html = etree.HTML(text)
+# html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
+result = html.xpath('//li[1]/a/text()')
+print(result)
+result = html.xpath('//li[last()]/a/text()')
+print(result)
+result = html.xpath('//li[position()<3]/a/text()')
+print(result)
+result = html.xpath('//li[last()-2]/a/text()')
+print(result)
+
+
+# ['first item']
+# ['fifth item']
+# ['first item', 'second item']
+# ['third item']
+
+# 第一次选择时，我们选取了第一个li节点，中括号中传入数字1即可。注意，这里和代码中不同，序号是以1开头的，不是以0开头。
+# 第二次选择时，我们选取了最后一个li节点，中括号中传入last()即可，返回的便是最后一个li节点。
+# 第三次选择时，我们选取了位置小于3的li节点，也就是位置序号为1和2的节点，得到的结果就是前两个li节点。
+# 第四次选择时，我们选取了倒数第三个li节点，中括号中传入last()-2即可。因为last()是最后一个，所以last()-2就是倒数第三个。
+
+
+from lxml import etree 
+html = etree.parse('./htmlModeTest.html', etree.HTMLParser())
+result = html.xpath('//li[1]//ancestor::*')
+print(result)
+result = html.xpath('//li[1]//ancestor::div')
+print(result)
+result = html.xpath('//li[1]//attribute::*')
+print(result)
+result = html.xpath('//li[1]/child::a[@href="link1.html"]')
+print(result)
+result = html.xpath('//li[1]/descendant::span')
+print(result)
+result = html.xpath('//li[1]/following::*[2]')
+print(result)
+
+
+# [<Element html at 0x22a511aeec8>, <Element body at 0x22a51002f48>, <Element div at 0x22a511aec48>, <Element ul at 0x22a511aed88>, <Element li at 0x22a511aec08>, <Element a at 0x22a511aee08>]
+# [<Element div at 0x22a511aec48>]
+# ['item-0', 'link1.html']
+# [<Element a at 0x22a511aed88>]
+# []
+# [<Element a at 0x22a51002f48>]
+
+# 第一次选择时，我们调用了ancestor轴，可以获取所有祖先节点。其后需要跟两个冒号，然后是节点的选择器，这里我们直接使用*，表示匹配所有节点，因此返回结果是第一个li节点的所有祖先节点，包括html、body、div和ul。
+
+# 第二次选择时，我们又加了限定条件，这次在冒号后面加了div，这样得到的结果就只有div这个祖先节点了。
+
+# 第三次选择时，我们调用了attribute轴，可以获取所有属性值，其后跟的选择器还是*，这代表获取节点的所有属性，返回值就是li节点的所有属性值。
+
+# 第四次选择时，我们调用了child轴，可以获取所有直接子节点。这里我们又加了限定条件，选取href属性为link1.html的a节点。
+
+# 第五次选择时，我们调用了descendant轴，可以获取所有子孙节点。这里我们又加了限定条件获取span节点，所以返回的结果只包含span节点而不包含a节点。
+
+# 第六次选择时，我们调用了following轴，可以获取当前节点之后的所有节点。这里我们虽然使用的是*匹配，但又加了索引选择，所以只获取了第二个后续节点
