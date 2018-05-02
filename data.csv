@@ -1,0 +1,16 @@
+id,name,age
+10001,Mike,20
+10002,Bod,22
+10003,Jordan,23
+id	name	age
+10001	Mike	20
+10002	Bod	22
+10003	Jordan	23
+id,name,age
+10001,Mike,22
+10002,BOd,23
+10003,Jordan,33
+id,name,age
+10001,Mike,12
+10002,Bod,12
+10003,Jordan,12
