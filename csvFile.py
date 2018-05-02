@@ -72,3 +72,61 @@ with open('data.csv', 'a+') as csvfile:
 
 # 10003,Jordan,12
 
+import csv 
+with open('data.csv', 'a+', encoding='utf-8') as csvfile:
+	fieldnames = ['id', 'name', 'age']
+	writer = csv.DictWriter(csvfile, fieldnames)
+	writer.writerow({'id':'10004', 'name':'王伟', 'age':33})
+
+# id,name,age
+
+# 10001,Mike,12
+
+# 10002,Bod,12
+
+# 10003,Jordan,12
+
+# 10004,王伟,33
+
+
+
+###   从csv 文件读取数据
+
+import csv 
+with open('data.csv', 'r', encoding='utf-8') as csvfile:
+	reader = csv.reader(csvfile)
+	for row in reader:
+		print(row)
+
+# ['id', 'name', 'age']
+# []
+# ['10001', 'Mike', '12']
+# []
+# ['10002', 'Bod', '12']
+# []
+# ['10003', 'Jordan', '12']
+# []
+# ['10004', '王伟', '33']
+# []
+
+import pandas as pd
+df = pd.read_csv('data.csv')
+print(df)
+
+#                    id    name  age
+# 0               10001    Mike   20
+# 1               10002     Bod   22
+# 2               10003  Jordan   23
+# 3       id\tname\tage     NaN  NaN
+# 4     10001\tMike\t20     NaN  NaN
+# 5      10002\tBod\t22     NaN  NaN
+# 6   10003\tJordan\t23     NaN  NaN
+# 7                  id    name  age
+# 8               10001    Mike   22
+# 9               10002     BOd   23
+# 10              10003  Jordan   33
+# 11                 id    name  age
+# 12              10001    Mike   12
+# 13              10002     Bod   12
+# 14              10003  Jordan   12
+# 15              10004      王伟   33
