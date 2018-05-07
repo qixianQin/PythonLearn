@@ -61,7 +61,6 @@ from pyquery import PyQuery as pq
 def parse_page(json):
 	if json:
 		items = json.get('data').get('cards')
-		items = json.get('data')
 		for item in items:
 			item = item.get('mblog')
 			weibo = {}
@@ -74,13 +73,11 @@ def parse_page(json):
 
 
 if __name__ == '__main__':
-	for page in range(1,4):
+	for page in range(1,11):
 		json = get_page(page)
-		# results = parse_page(json)
-		# for result in results:
-		# 	print(result)
-		print(json)
-		# print(json.text())
-		# print(json.get('data'))
+		results = parse_page(json)
+		for result in results:
+			print(result)
+
 
 
