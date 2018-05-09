@@ -32,7 +32,7 @@ def get_page(offset):
 		'keyword':'街拍',
 		'autoload':'true',
 		'count':'20',
-		'cur_tab':'1',
+		'cur_tab':'3',
 		'from':'search_tab'
 	}
 
