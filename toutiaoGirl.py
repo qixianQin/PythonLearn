@@ -46,10 +46,14 @@ def get_page(offset):
 
 def get_image(json):
 	if json.get('data'):
+		print(json.get('data'))
 		for item in json.get('data'):
+			print(item)
 			title = item.get('title')
+			print(title)
 			images = item.get('image_list')
 			for image in images:
+				print(iamge)
 				yield{
 					'image':image.get('url'),
 					'title':title
@@ -89,9 +93,9 @@ if __name__ == '__main__':
 	# pool.map(main, groups)
 	# pool.close()
 	# pool.join()
-	for i in range(1, 20):
+	for i in range(1, 3):
 		offset = i * 20
 		json = get_page(offset)
 		for item in get_image(json):
 			print(item)
-			save_image(item)
+			# save_image(item)
