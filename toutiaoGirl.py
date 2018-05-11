@@ -46,18 +46,20 @@ def get_page(offset):
 
 def get_image(json):
 	if json.get('data'):
-		print(json.get('data'))
+		# print(json.get('data'))
 		for item in json.get('data'):
 			print(item)
 			title = item.get('title')
 			print(title)
 			images = item.get('image_list')
-			for image in images:
-				print(iamge)
-				yield{
-					'image':image.get('url'),
-					'title':title
-				}
+			print(images)
+			if images:
+				for image in images:
+					print(image)
+					yield{
+						'image':image.get('url'),
+						'title':title
+					}
 
 def save_image(item):
 	if not os.path.exists(item.get('title')):
