@@ -11,8 +11,10 @@ from hashlib import md5
 from urllib.parse import urlencode
 from multiprocessing.pool import Pool
 
+## 头条 URL 
 base_url = 'https://www.toutiao.com/search_content/?'
 
+##   获取网页，并返回 json 格式的数据
 def get_page(offset):
 
 	headers = {
@@ -44,41 +46,48 @@ def get_page(offset):
 	except requests.ConnectionError as e:
 		print('Error:', e.args)
 
+
+###   从获取得到的 json 格式解析出 图片的 url  和 所在目录名
 def get_image(json):
 	if json.get('data'):
 		# print(json.get('data'))
 		for item in json.get('data'):
-			print(item)
+			# print('item:', item)
 			title = item.get('title')
-			print(title)
+			# print('title:', title)
 			images = item.get('image_list')
-			print(images)
+			# print('images', images)
 			if images:
 				for image in images:
-					print(image)
+					# print('image:',image)
 					yield{
 						'image':image.get('url'),
 						'title':title
 					}
 
+## 保存图片
 def save_image(item):
 	if not os.path.exists(item.get('title')):
 		os.mkdir(item.get('title'))
 	try:
-		if None == item.get('iamge'):
+		# print('image' ,item.get('image'))
+		if None == item.get('image'):
 			return
-		response = requests.get(item.get('iamge'))
+		##  由于获取到的图片 URL中，如果不把 list 替换成 origin ,则图片很小
+		pic_url = 'http:' + item.get('image').replace('list', 'origin')
+		response = requests.get(pic_url)
 		if response.status_code == 200:
-			file_path = '{0}/{1}{2}'.format(item.get('title'), md5(response.content).hexdigest(), 'jpg')
+			file_path = '{0}/{1}{2}'.format(item.get('title'), md5(response.content).hexdigest(), '.jpg')
 			if not os.path.exists(file_path):
 				with open(file_path, 'wb') as f:
 					f.write(response.content)
+				print('Success save Image!')
 			else:
 				print('Already Download:', file_path)
 	except requests.ConnectionError as e:
 		print('Failed to save image.', e.args)
 
-
+###   多线程方式还没有调试好
 # def main(offset):
 # 	json = get_page(offset)
 # 	for item in get_image(json):
@@ -95,9 +104,9 @@ if __name__ == '__main__':
 	# pool.map(main, groups)
 	# pool.close()
 	# pool.join()
-	for i in range(1, 3):
+	for i in range(1, 2):
 		offset = i * 20
 		json = get_page(offset)
 		for item in get_image(json):
 			print(item)
-			# save_image(item)
+			save_image(item)
