@@ -87,26 +87,25 @@ def save_image(item):
 	except requests.ConnectionError as e:
 		print('Failed to save image.', e.args)
 
-###   多线程方式还没有调试好
-# def main(offset):
-# 	json = get_page(offset)
-# 	for item in get_image(json):
-# 		print(item)
-# 		save_image(item)
+###   多线程方式
+def main(offset):
+	json = get_page(offset)
+	for item in get_image(json):
+		save_image(item)
 
-# GROUP_START = 1
-# GROUP_END = 20
+GROUP_START = 1
+GROUP_END = 4
 
 if __name__ == '__main__':
-	# pool = Pool()
-	# groups = ([x * 20 for x in range(GROUP_START, GROUP_END + 1)])
-	# print('groups:', groups)
-	# pool.map(main, groups)
-	# pool.close()
-	# pool.join()
-	for i in range(1, 2):
-		offset = i * 20
-		json = get_page(offset)
-		for item in get_image(json):
-			print(item)
-			save_image(item)
+	pool = Pool()
+	groups = ([x * 20 for x in range(GROUP_START, GROUP_END + 1)])
+	print('groups:', groups)
+	pool.map(main, groups)
+	pool.close()
+	pool.join()
+	# for i in range(1, 2):
+	# 	offset = i * 20
+	# 	json = get_page(offset)
+	# 	for item in get_image(json):
+	# 		print(item)
+	# 		save_image(item)
