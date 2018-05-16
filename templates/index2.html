@@ -1,0 +1,21 @@
+<!--生成HTML快捷键：  Ctrl+Shift+P  输入  sshtml,   然后输入 ！  然后再按Tab 或者 Ctrl+E -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>POST 方法</title>
+</head>
+<body>
+
+	<center><h1>Post Method</h1></center>
+	<center>
+		<form action="{{url_for('index')}}", method="POST">
+			Name： <input type="text" name="name"> <br>
+			Age :  <input type="text" name="age"> <br>
+			<button>commit</button> 
+		</form>
+
+	</center>
+</body>
+</html>

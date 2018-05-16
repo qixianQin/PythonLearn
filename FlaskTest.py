@@ -60,17 +60,33 @@
 # 	app.run(host='127.0.0.1', port=8080)
 
 
-from flask import Flask,url_for,redirect
+# from flask import Flask,url_for,redirect
  
+# app = Flask(__name__)
+ 
+# @app.route('/')
+# def index():
+#     return redirect(url_for('user'))
+ 
+# @app.route('/user/')
+# def user():
+#     return 'This is User'
+ 
+# if __name__ == '__main__':
+#     app.run(host='127.0.0.1',port=8080,debug=True)
+
+
+from flask import Flask, request
+
 app = Flask(__name__)
- 
-@app.route('/')
+app.config["DEBUG"] = True
+
+@app.route('/get/', methods=['GET'])
 def index():
-    return redirect(url_for('user'))
- 
-@app.route('/user/')
-def user():
-    return 'This is User'
- 
+	name = request.args.get('name')
+	age = request.args.get('age')
+	print('name: %s  \nage: %s' % (name, age))
+	return 'OK'
+
 if __name__ == '__main__':
-    app.run(host='127.0.0.1',port=8080,debug=True)
+	app.run(host='127.0.0.1', port=8080)
