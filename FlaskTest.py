@@ -73,20 +73,50 @@
 #     return 'This is User'
  
 # if __name__ == '__main__':
-#     app.run(host='127.0.0.1',port=8080,debug=True)
+#     app.run(host='127.0.0.1',debug=True)
 
 
-from flask import Flask, request
+
+
+# from flask import Flask, request
+
+# app = Flask(__name__)
+# app.config["DEBUG"] = True    ###   第一种方式
+# # app.config.update(DEBUG=True)
+
+# @app.route('/', methods=['GET'])
+# def index():
+# 	# name = request.args.get('name')
+# 	# age = request.args.get('age')
+# 	# print('name: %s  \nage: %s' % (name, age))
+# 	return 'OK'
+
+
+# if __name__ == '__main__':
+# 	app.run(host='127.0.0.1', port=8080)
+
+
+### 开启debug模式的方式
+###  1、  在 app.run（）  方法中添加  debug=True 参数
+###  2、 app.config['DEBUG'] = True
+###  3、 app.config.update(DEBUG=True)
+###  4、引入对象  ： 在 config.py中 新增一个类  Main_Config
+### 5、引用  配置文件
+
+from flask import Flask
+from config import Main_Config
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
+# app.config['DEBUG'] = True
+# app.config.update(DEBUG=True)
+# app.config.from_object(Main_Config) 
+app.config.from_pyfile("config.conf", silent=True)    # config.conf 为文件名， 
+##   silent =True , 当文件不存在的时候，不报错， 只返回False
 
-@app.route('/get/', methods=['GET'])
+@app.route('/')
 def index():
-	name = request.args.get('name')
-	age = request.args.get('age')
-	print('name: %s  \nage: %s' % (name, age))
-	return 'OK'
+	return 'ok!!!!dddaaaa'
 
 if __name__ == '__main__':
-	app.run(host='127.0.0.1', port=8080)
+	app.run()
+	# app.run(debug=True)

@@ -9,8 +9,8 @@
 	<center>
 		<form action="{{url_for('index')}}" method="POST">
 			用户名： <input type="text" name="say_user"><br>
-			留言标题： <input type="text" name="say_title">
-			留言内容： <input type="text" name="say">
+			留言标题： <input type="text" name="say_title"><br>
+			留言内容： <input type="text" name="say"><br>
 			<button>commit</button>
 		</form>
 	</center>
@@ -32,11 +32,10 @@
 					<td>{{say['text']}}</td>
 					<td>{{say['user']}}</td>
 					<td>{{say['date']}}</td>
-
 				</tr>
-
+				{% endfor %}
 			</tbody>
-				}
+				
 			
 
 		</table>
