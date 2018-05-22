@@ -17,6 +17,10 @@ def get_page(index):
 		# for div_child in soup.find_all(attrs={"id":"content-left"}):
 
 		# return soup.find_all(attrs={"id":"content-left"})
+		result = []
+		for div_child in soup.find_all(class_='article block untagged mb15 typs_hot'):
+			result.extend(div_child.find_all(name='span'))
+		print('result:', result)
 		return soup.find_all(class_='article block untagged mb15 typs_hot')
 	else:
 		return None
