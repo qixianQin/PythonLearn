@@ -11,8 +11,8 @@ def get_page(index):
 	response = requests.get(base_url)
 	if response.status_code == 200:
 		soup = BeautifulSoup(response.text, 'lxml')
-		print("soup:", type(soup))
-		print("content-left: ",type(soup.find_all(class_='content')))
+		# print("soup:", type(soup))
+		# print("content-left: ",type(soup.find_all(class_='content')))
 		# print(soup.find_all(attrs={"id":"content-left"}).find(class_='content'))
 		# for div_child in soup.find_all(attrs={"id":"content-left"}):
 
@@ -20,18 +20,23 @@ def get_page(index):
 		result = []
 		for div_child in soup.find_all(class_='article block untagged mb15 typs_hot'):
 			result.extend(div_child.find_all(name='span'))
-		print('result len:', len(result))
-		print('result:', result)
+		# print('result len:', len(result))
+		# print('result:', result)
 		result_span = []
 		for span in result:
-			print('Span:', span)
-			print('get:', type(span.string))
-			print(type(span))
-			if span.string.startswith(' <span>'):
+			# print('Span:', span)
+			# print('get:', type(span.string))
+			# print(type(span))
+			span_str = str(span)
+			# print('span_str:', span_str)
+			# print('startswith:', span_str.startswith('<span>'))
+			if span_str.startswith('<span>'):
 			# if span.find(' <span>'):
-				result_span.extend(span)
-		print('span_len:', len(result_span))
-		print('span:', result_span)
+				# print('add result_span to []:')
+				print(span_str, '\n')
+				result_span.append(span_str)
+		# print('span_len:', len(result_span))
+		# print('span:', result_span)
 
 
 		# return soup.find_all(class_='article block untagged mb15 typs_hot')
