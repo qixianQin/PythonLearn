@@ -36,8 +36,8 @@ def get_page(index):
 				print(span_str, '\n')
 				result_span.append(span_str)
 		# print('span_len:', len(result_span))
+		####
 		# print('span:', result_span)
-
 
 		# return soup.find_all(class_='article block untagged mb15 typs_hot')
 	else:
