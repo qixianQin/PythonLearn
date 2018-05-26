@@ -21,8 +21,9 @@ def get_page(index):
 		for div_child in soup.find_all(class_='article block untagged mb15 typs_hot'):
 			result.extend(div_child.find_all(name='span'))
 		# print('result len:', len(result))
-		# print('result:', result)
+		print('result:', result)
 		result_span = []
+		result_number = []
 		for span in result:
 			# print('Span:', span)
 			# print('get:', type(span.string))
@@ -33,11 +34,16 @@ def get_page(index):
 			if span_str.startswith('<span>'):
 			# if span.find(' <span>'):
 				# print('add result_span to []:')
-				print(span_str, '\n')
+				# print(span_str, '\n')
 				result_span.append(span_str)
+			if span_str.startswith('<span class="stats-vote">'):
+				result_number.append(span_str)
 		# print('span_len:', len(result_span))
 		####
-		# print('span:', result_span)
+		print('span:', result_span)
+		print('span len:', len(result_span))
+		print('number', result_number)
+		print('number len:', len(result_number))
 
 		# return soup.find_all(class_='article block untagged mb15 typs_hot')
 	else:
