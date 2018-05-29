@@ -1,6 +1,7 @@
 # -*- conding:utf-f -*- 
 import scrapy
 
+#  要继承自 scrapy.Spider 类   
 class QuotesSpider(scrapy.Spider):
 	"""docstring for QuotesSpider"""
 	name = "quotes"
