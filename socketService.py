@@ -8,7 +8,7 @@ import time
 
 def dealClient(sock, addr):
 	# 第四步： 接收传来的数据， 并发送给对方数据
-	print('Accept new connection from %s:%s...' % (addr, addr))
+	print('Accept new connection from %s : %s...' % (addr, addr))
 	sock.send(b'Hello, I am server!')
 	while True:
 		data  = sock.recv(1024)
