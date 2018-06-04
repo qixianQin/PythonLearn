@@ -84,3 +84,87 @@ class ZhihuSpider(CrawlSpider):
 			image_url = image_url,
 			)
 		yield item
+
+	def parse_follow(self, response):
+		"""
+		解析follow 数据
+		"""
+		selector = Selector(response)
+		people_links = selector.xpath('//a[@class="zg-link"]/@href').extract()
+		people_info = selector.xpath('//span[@class="zg-profile-section-name"]/text()').extract_first()
+		people_param = selector.xpath('//div[@class="zh-general-list clearfix"]/@data-init').extract_first()
+		re_result = re.search(r'\d+', people_info) if people_info else None
+		people_count = int(re_result.group()) if re_result else len(people_links)
+		if not people_count:
+			return 
+		people_param = json.loads(people_param)
+		post_url = 'https://{}/node/{}'.format(self.allowed_domains[0], people_param['nodename'])
+
+		start = 20
+		while start < people_count :
+			payload = {
+			u'method':u'next',
+			u'_xsrf':self.xsrf,
+			u'params':people_param[u'params']
+			}
+
+			payload[u'params'][u'offset'] = start 
+			payload[u'params'] = json.dumps(payload[u'params'])
+			HEADER.update({'Referer':response.url})
+			start += 20
+
+			yield Request(post_url, 
+				method='POST',
+				meta={'cookiejar':response.meta['cookiejar']},
+				headers=HEADER,
+				body=urlencode(payload),
+				priority=100,
+				callback=self.parse_post_follow
+				)
+
+		zhihu_ids = []
+		for people_url in people_links:
+			zhihu_ids.append(os.path.split(people_url)[-1])
+			yield Request(people_url,
+				meta={'cookiejar':response.meta['cookiejar']},
+				callback=self.parse_people,
+				errback=self.parse_err
+				)
+
+		url, user_type = os.path.split(response.url)
+		user_type = People.Follower if user_type == u'followers' else People.Followee
+		item = ZhihuRelationItem(
+			zhihu_id=os.path.split(url)[-1],
+			user_type=user_type,
+			user_list=zhihu_ids
+			)
+		yield
+
+def parse_post_follow(self, response):
+	"""
+	获取动态请求拿到人员
+	"""
+
+	body = json.loads(response.body)
+	people_divs = body.get('msg', [])
+
+	zhihu_ids = []
+	for div in people_divs:
+		selector = Selector(text=div)
+		link = selector.xpath('//a[@class="zg-link"]/@href').extract_first()
+		if not link:
+			continue
+		zhihu_ids.append(os.path.split(link)[-1])
+		yield Request(link, meta={'cookiejar':response.meta['cookiejar']}, callback=self.parse_people, errback=self.parse_err)
+
+	url, user_type = os.path.split(response.request.headers['Referer'])
+	user_type = People.Follower if user_type == u'followers' else People.Followee
+	zhihu_id = os.path.split(url)[-1]
+	yield ZhihuRelationItem(
+		zhihu_id = zhihu_id,
+		user_type = user_type,
+		user_list = user_list,
+		)
+
+def parse_err(self, response):
+	log.ERROR('crawl {} failed'.format(response.url))
