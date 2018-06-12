@@ -225,10 +225,91 @@ def waitfor(proc, port):
 			s.close()
 
 # extra prints to make line stand out 
+	print()
+	print(proc.prefix, ascolor(INVERES, 'failed to start'))
+	print()
+
+	sleep(1)
+	killAllSubs()
+	sys.exit(1)
+
+def printer():
+	while not fds: sleep(0.01) # wait until there is at least one fd to watch
+
+	while fds: 
+		(files, _, errors) = select(fds.keys(),[],fds.keys(),1)
+		for file in set(files+errors):
+			#try to print related lines together
+			while select([file],[],[],0)[0]:
+				line = file.readline().rstrip()
+				if line:
+					print(fds[file].prefix, line)
+				else:
+					if fds[file].pool() is not None:
+						print(fds[file].prefix, ascolor(INVERES,'EXITED'), fds[file].returncode)
+						del fds[file]
+						break
+					break
+
+printer_thread = Thread(target=printer)
+printer_thread.start()
+
+configs = []
+for i in range(1, N_CONFIG + 1):
+	path = BASE_DATA_PATH + 'config_' + str(i)
+	os.makedirs(path)
+	#print mongod '--port', str(20000+i), '--configsvr','--dbpath', path
+	config = Popen([mongod, '--port', str(20000+i),'--configsvr','--dbpath',path] + CONFIG_ARGS, stdin=devnull, stdout=PIPE, stderr=STDOUT)
+	config.prefix = ascolor(CONFIG_COLOR,'C'+str(i))+':'
+	fds[config.stdout] = config
+	procs.append(config)
+	waitfor(config, 20000+i)
+	config.append('localhost:'+str(20000+i))
+
+for i in range(1, N_SHARDS+1):
+	path = BASE_DATA_PATH + 'shard_' + str(i)
+	os.makedirs(path)
+	shard = Popen([mongod, '--port', str(30000+i),'--shardsvr','--dbpath', path] + MONGOD_ARGS, stdin=devnull, stdout=PIPE, stderr=STDOUT)
+	shard.prefix = ascolor(MONGOD_COLOR,'M'+str(i))+':'
+	fds[shard.stdout] = shard 
+	procs.append(shard)
+	waitfor(shard, 30000+i)
+
+#this must be done before starting mongos
+
+for config_str in configs:
+	host, port = config_str.split(':')
+	config = MongoClient(host, int(port), ssl=USE_SSL).config
+	config.settings.save({'_id':'chunksize','value':CHUNK_SIZE}, sate=True)
+del config # don't leave around connection directly to config server
+
+if N_MONGOS == 1:
+	MONGOS_PORT -= 1  # added back in loop
+
+for i in range(1, N_MONGOS+1):
+	router = Popen(VALGRIND_ARGS + [mongos, '--port', str(MONGOS_PORT+i),'--configdb',',','.join(configs)']+MONGOS_ARGS,stdin=devnull, stdout=PIPE,stderr=STDOUT)
+	router.prefix = ascolor(MONGOD_COLOR,'S'+str(i))+':'
+	fds[router.stdoutd] = router
+	procs.append(router)
+
+	waitfor(router, MONGOS_PORT + i)
+
+conn = MongoClient('localhost', MONGOS_PORT + 1, ssl=USE_SSL)
+admin = conn.admin
+
+for i in range(1, N_SHARDS+1):
+	admin.command('addshard','localhost:3000'+str(i),allowLocal=True)
+
+AFTER_SETUP()
+
+#just to be safe
+sleep(2)
+
+print('****READY*****')
 print()
-print(proc.prefix, ascolor(INVERES, 'failed to start'))
 print()
 
-sleep(1)
-killAllSubs()
-sys.exit(1)
+try:
+	printer_thread.join()
+except KeyboardInterrupt:
+	pass
